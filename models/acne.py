@@ -45,6 +45,7 @@ class Acn(nn.Module):
             # turn that into an attention vector that sums to 1 in that
             # dimension. We will then use this value to do a weighted mean and
             # standard deviation computation below.
+            pass
         else:
             # Note that below is the case where we simply do averaging without
             # attention.
