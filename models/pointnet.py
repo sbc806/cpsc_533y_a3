@@ -24,11 +24,15 @@ class PointNet(FcNet):
         # of the pointNet. `last_bn_norm` should be True for our example, and
         # we would like to use 3 blocks, where each of our pointnet block to
         # have 32 neurons.
+        self.net = nn.Sequential()
+        inc = 2
+        self.encoder = Mlps(inc, [32, 32, 32], last_bn_norm=True)
 
         # TODO: (5 points) Implement the output layer that converts the
         # max-pooled global feature into `logits` to be used for
         # classification. In other words, it should be a simple linear layer
         # without any activation.
+        self.output_layer = nn.Linear(config.num_pts, num_classes)
 
     def forward(self, x):
         """Forward pass.
@@ -42,7 +46,10 @@ class PointNet(FcNet):
         # and then apply the output layer. Note that when calling our
         # `self.encoder`, you might want to investigate the `format` option for
         # easy processing.
-
+        encoded_x = self.encoder(x, format="BNC")
+        self.pooling_layer = nn.MaxPool1d(self.config.num_pts)
+        pooled_x = self.pooling_layer(encoded_x).squeeze(-1)
+        logits = self.output_layer(pooled_x)
         # NOTE: we get logits as outputs, which we then use log_softmax to use
         # in our loss function.
         return F.log_softmax(logits, dim=1)
