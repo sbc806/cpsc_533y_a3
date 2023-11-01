@@ -12,6 +12,8 @@ import torch.nn.functional as F
 from models.fcnet import FcNet
 from models.nn_pts import Mlps, get_knn_idx, index_points, sampling_fps
 
+import math
+
 
 class SetAbstraction(nn.Module):
     """Set abstraction (main block in PointNet2) with pointnet."""
@@ -43,6 +45,10 @@ class SetAbstraction(nn.Module):
         # `self.downratio`. The example implementation uses flooring to when
         # the ratio converts the number of samples into floats. Our sampled
         # locations should be `set_loc` with size of m.
+        m = math.floor(n * self.downratio)
+        set_loc = sampling_fps(loc, m)
+        print("n", n, "m", m)
+        print("set_loc.shape", set_loc.shape)
 
         # NOTE: Steps 1 to 3 below are nearly identical for both pointnet2 and pointconv. 
         # The minor difference would be that pointnet2 operates on downsampled point clouds 
@@ -51,11 +57,15 @@ class SetAbstraction(nn.Module):
         # TODO: (5 points) Step 1 -- Use `get_knn_idx` to retrieve the index of the k
         # nearest neighbors in Euclidean space. It should be of shape (b, m,
         # k). The top-K should also consider itself.
+        nearest_neighbors = get_knn_idx(set_loc, loc, self.k)
+        print("nearest_neighbors.shape", nearest_neighbors.shape)
 
         # TODO: (5 points) Step 2 -- Use `index_points` to retrieve the features of these
         # k-nn points. Your retrieved features should be of (b, c, m, k) if
         # done properly.
         #
+        retrieved_features = index_points(feat, nearest_neighbors)
+        print("retrieved_features.shape", retrieved_features.shape)
 
         # TODO: (5 points) Step 3 -- Retrieve relative location of the top-K neighbors.
         # Note that you can again use `index_points` here. An easy way to
@@ -64,13 +74,19 @@ class SetAbstraction(nn.Module):
         # can easily do this. For example, if your top k locations are of shape
         # (b, d, m, k), you can subtract something of shape (b, d, m, 1) to get
         # the relative coordinates of all top-K samples for all samples.
+        retrieved_locations = index_points(loc, nearest_neighbors)
+        relative_locations = retrieved_locations - set_loc.unsqueeze(-1)
 
         # TODO: (5 points) Concatenate features from step 2 with their relative locations
         # from step 3. This should result in a (b, d+c, m, k) array.
+        concatenated_features = torch.cat((retrieved_features, relative_locations), dim=1)
+        print("concatenated_features.shape", concatenated_features.shape)
 
         # TODO: (5 points) Process concatenated features with `self.mlps` to obtain a new
         # set of features of shape (b, c', m, k) and then take the maximum
         # along the `k` dimension to get our final descriptors `set_feat`.
+        set_feat = torch.max(concatenated_features, dim=-1)
+        print("set_feat.shape", set_feat.shape)
 
         return (set_feat, set_loc)
 

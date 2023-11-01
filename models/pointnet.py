@@ -49,10 +49,10 @@ class PointNet(FcNet):
         # `self.encoder`, you might want to investigate the `format` option for
         # easy processing.
         encoded_x = self.encoder(x, format="BNC")
-        print("encoded shape", encoded_x.shape)
+        
         self.pooling_layer = nn.MaxPool1d(64)
         pooled_x = self.pooling_layer(encoded_x.transpose(2, 1)).squeeze(-1)
-        print("pooled shape", pooled_x.shape)
+        
         logits = self.output_layer(pooled_x)
         # NOTE: we get logits as outputs, which we then use log_softmax to use
         # in our loss function.

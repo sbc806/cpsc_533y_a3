@@ -47,7 +47,7 @@ class Mlps(nn.Module):
             x = x.transpose(2, 1).unsqueeze(-1)
         elif format == "BCN":
             x = x.unsqueeze(-1)
-        print(x.shape)
+        
         # We use the tensor of the "BCNM" format.
         x = self.layers(x)
 
