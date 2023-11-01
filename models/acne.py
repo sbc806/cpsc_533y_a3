@@ -45,7 +45,9 @@ class Acn(nn.Module):
             # turn that into an attention vector that sums to 1 in that
             # dimension. We will then use this value to do a weighted mean and
             # standard deviation computation below.
-            pass
+            x_att = self.att_layer(x)
+            self.softmax_layer = nn.Softmax(dim=2)
+            a = self.softmax_layer(x_att)
         else:
             # Note that below is the case where we simply do averaging without
             # attention.
@@ -55,6 +57,11 @@ class Acn(nn.Module):
         # TODO: (5 points) Calculate the weighted statistics -- mean and std.
         # Mean/Std should be of shape (b,c,1,1), which you then apply to your
         # data to make mean zero std 1.
+        weighted_x = a * x
+        weighted_mean = torch.mean(weighted_x, dim=2, keepdim=True)
+        weighted_std = torch.std(weighted_x, dim=2, keepdim=True, correction=0)
+
+        out = (x - weighted_mean) / (weighted_std + self.eps)
 
         return out
 
@@ -84,6 +91,10 @@ class AcneBlock(nn.Module):
         # followed by an "acn" layer which is the `Acn` block defined above,
         # followed by a "bn" layer that is `nn.BatchNorm2D` block, and finally
         # a "relu" layer which is using `nn.ReLU`.
+        self.layer.add_module(f"Linear-{0}", nn.Conv2d(inc, outc, 1))
+        self.layer.add_module(f"acn-{0}", Acn(outc, cn_opt))
+        self.layer.add_module(f"bn-{0}", nn.BatchNorm2D(outc))
+        self.layer.add_module(f"relu-{0}", nn.ReLU(inplace=True))
 
     def forward(self, x):
         """Forward pass.

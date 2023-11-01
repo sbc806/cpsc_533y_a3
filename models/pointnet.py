@@ -19,14 +19,14 @@ class PointNet(FcNet):
         super(PointNet, self).__init__(config)
         self.config = config
         num_classes = config.num_classes
+        self.num_points = config.num_points
 
         # TODO: (5 points) Use the class `Mlps` to implement the encoder part
         # of the pointNet. `last_bn_norm` should be True for our example, and
         # we would like to use 3 blocks, where each of our pointnet block to
         # have 32 neurons.
         self.net = nn.Sequential()
-        inc = 2
-        self.encoder = Mlps(inc, [32, 32, 32], last_bn_norm=True)
+        self.encoder = Mlps(config.in_dim, [32, 32, 32], last_bn_norm=True)
         # self.net.add_module(f"Mlps-{1}", Mlps(inc, [32], last_bn_norm=True))
         # self.net.add_module(f"Mlps-{2}", Mlps(32, [32], last_bn_norm=True))
         # self.net.add_module(f"Mlps-{3}", Mlps(32, [32], last_bn_norm=True))
@@ -50,7 +50,7 @@ class PointNet(FcNet):
         # easy processing.
         encoded_x = self.encoder(x, format="BNC")
         
-        self.pooling_layer = nn.MaxPool1d(64)
+        self.pooling_layer = nn.MaxPool1d(self.num_points)
         pooled_x = self.pooling_layer(encoded_x.transpose(2, 1)).squeeze(-1)
         
         logits = self.output_layer(pooled_x)

@@ -79,11 +79,11 @@ def get_knn_idx(p1, p2, k):
     #
     
     distances = pairwise_sqrdist_b(p1, p2)
-    print(p1.shape, p2.shape)
-    print(distances.shape)
+    # print(p1.shape, p2.shape)
+    # print(distances.shape)
     sorted_distances, indices = torch.sort(distances, dim=2)
     idx = indices[:, :, 0:k]
-    print(idx.shape)
+    # print(idx.shape)
     return idx
 
 
