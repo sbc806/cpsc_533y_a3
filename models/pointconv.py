@@ -82,7 +82,14 @@ class ConvLayer(nn.Module):
         # of (b, n, k, c2, 1) or (b, n, k, 1, c2) at the end. You then need to
         # sum up along the `k` dimension here, ultimately achieving (b, n, c2)
         # as output.
-
+        kernel_matrix = torch.moveaxis(kernel_matrix, 2, 1)
+        kernel_matrix = torch.moveaxis(kernel_matrix, 3, 2)
+        kernel_matrix = kernel_matrix.unsqueeze(-2)
+        print(kernel_matrix.shape)
+        reshaped_features = torch.moveaxis(retrieved_features, 2, 1)
+        reshaped_features = torch.moveaxis(reshaped_features, 3, 2)
+        reshaped_features = reshaped_features.unsqueeze(-2)
+        print(reshaped_features.shape)
         return feat.moveaxis(-1, 1)
 
 
