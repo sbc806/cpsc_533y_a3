@@ -52,6 +52,7 @@ class PointNet(FcNet):
         print("encoded shape", encoded_x.shape)
         self.pooling_layer = nn.MaxPool1d(32)
         pooled_x = self.pooling_layer(encoded_x.transpose(2, 1)).squeeze(-1)
+        print("pooled shape", pooled_x.shape)
         logits = self.output_layer(pooled_x)
         # NOTE: we get logits as outputs, which we then use log_softmax to use
         # in our loss function.
