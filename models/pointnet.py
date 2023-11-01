@@ -26,8 +26,10 @@ class PointNet(FcNet):
         # have 32 neurons.
         self.net = nn.Sequential()
         inc = 2
-        self.encoder = Mlps(inc, [32, 32, 32], last_bn_norm=True)
-
+        # self.encoder = Mlps(inc, [32, 32, 32], last_bn_norm=True)
+        self.net.add_module(f"Mlps-{1}", Mlps(inc, [32], last_bn_norm=True))
+        self.net.add_module(f"Mlps-{2}", Mlps(32, [32], last_bn_norm=True))
+        self.net.add_module(f"Mlps-{3}", Mlps(32, [32], last_bn_norm=True))
         # TODO: (5 points) Implement the output layer that converts the
         # max-pooled global feature into `logits` to be used for
         # classification. In other words, it should be a simple linear layer
@@ -46,7 +48,8 @@ class PointNet(FcNet):
         # and then apply the output layer. Note that when calling our
         # `self.encoder`, you might want to investigate the `format` option for
         # easy processing.
-        encoded_x = self.encoder(x, format="BNC")
+        encoded_x = self.net(x, format="BNC")
+        print("encoded shape", encoded_x.shape)
         self.pooling_layer = nn.MaxPool1d(32)
         pooled_x = self.pooling_layer(encoded_x.transpose(2, 1)).squeeze(-1)
         logits = self.output_layer(pooled_x)
