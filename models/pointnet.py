@@ -50,7 +50,7 @@ class PointNet(FcNet):
         # easy processing.
         encoded_x = self.encoder(x, format="BNC")
         print("encoded shape", encoded_x.shape)
-        self.pooling_layer = nn.MaxPool1d(32)
+        self.pooling_layer = nn.MaxPool1d(64)
         pooled_x = self.pooling_layer(encoded_x.transpose(2, 1)).squeeze(-1)
         print("pooled shape", pooled_x.shape)
         logits = self.output_layer(pooled_x)
