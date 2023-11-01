@@ -63,7 +63,8 @@ class Acn(nn.Module):
         weighted_std = torch.std(weighted_x, dim=2, keepdim=True, correction=0)
 
         out = (weighted_x - weighted_mean) / (weighted_std + self.eps)
-
+        print(torch.mean(out, dim=1))
+        print(torch.std(out, dim=1))
         return out
 
 
@@ -93,7 +94,7 @@ class AcneBlock(nn.Module):
         # followed by a "bn" layer that is `nn.BatchNorm2D` block, and finally
         # a "relu" layer which is using `nn.ReLU`.
         self.layer.add_module(f"Linear-{0}", nn.Conv2d(inc, outc, 1))
-        self.layer.add_module(f"acn-{0}", Acn(outc, cn_opt))
+        self.layer.add_module(f"acn-{0}", Acn(outc, atten_opt))
         self.layer.add_module(f"bn-{0}", nn.BatchNorm2d(outc))
         self.layer.add_module(f"relu-{0}", nn.ReLU(inplace=True))
 

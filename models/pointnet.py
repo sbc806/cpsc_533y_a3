@@ -26,15 +26,14 @@ class PointNet(FcNet):
         # we would like to use 3 blocks, where each of our pointnet block to
         # have 32 neurons.
         self.net = nn.Sequential()
-        self.encoder = Mlps(config.indim, [32, 32, 32], last_bn_norm=True)
-        # self.net.add_module(f"Mlps-{1}", Mlps(inc, [32], last_bn_norm=True))
-        # self.net.add_module(f"Mlps-{2}", Mlps(32, [32], last_bn_norm=True))
-        # self.net.add_module(f"Mlps-{3}", Mlps(32, [32], last_bn_norm=True))
+        pointnet_mlp_outc_list = [32, 32, 32]
+        self.encoder = Mlps(config.indim, pointnet_mlp_outc_list, last_bn_norm=True)
+        
         # TODO: (5 points) Implement the output layer that converts the
         # max-pooled global feature into `logits` to be used for
         # classification. In other words, it should be a simple linear layer
         # without any activation.
-        self.output_layer = nn.Linear(32, num_classes)
+        self.output_layer = nn.Linear(pointnet_mlp_outc_list[-1], num_classes)
 
     def forward(self, x):
         """Forward pass.
