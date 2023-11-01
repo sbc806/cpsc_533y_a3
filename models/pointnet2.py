@@ -86,7 +86,9 @@ class SetAbstraction(nn.Module):
         # TODO: (5 points) Process concatenated features with `self.mlps` to obtain a new
         # set of features of shape (b, c', m, k) and then take the maximum
         # along the `k` dimension to get our final descriptors `set_feat`.
-        set_feat, _= torch.max(concatenated_features, dim=-1)
+        processed_concatenated_features = self.mlps(concatenated_features)
+        print("processed_concatenated_features.shape", processed_concatenated_features.shape)
+        set_feat, _= torch.max(processed_concatenated_features, dim=-1)
         print("set_feat.shape", set_feat.shape)
 
         return (set_feat, set_loc)
