@@ -76,6 +76,7 @@ class SetAbstraction(nn.Module):
         # the relative coordinates of all top-K samples for all samples.
         retrieved_locations = index_points(loc, nearest_neighbors)
         relative_locations = retrieved_locations - set_loc.unsqueeze(-1)
+        print("relative_locations.shape", relative_locations.shape)
 
         # TODO: (5 points) Concatenate features from step 2 with their relative locations
         # from step 3. This should result in a (b, d+c, m, k) array.
@@ -85,7 +86,7 @@ class SetAbstraction(nn.Module):
         # TODO: (5 points) Process concatenated features with `self.mlps` to obtain a new
         # set of features of shape (b, c', m, k) and then take the maximum
         # along the `k` dimension to get our final descriptors `set_feat`.
-        set_feat = torch.max(concatenated_features, dim=-1)
+        set_feat, _= torch.max(concatenated_features, dim=-1)
         print("set_feat.shape", set_feat.shape)
 
         return (set_feat, set_loc)
