@@ -85,11 +85,15 @@ class ConvLayer(nn.Module):
         kernel_matrix = torch.moveaxis(kernel_matrix, 2, 1)
         kernel_matrix = torch.moveaxis(kernel_matrix, 3, 2)
         kernel_matrix = kernel_matrix.unsqueeze(-2)
-        print(kernel_matrix.shape)
+        print("kernel_matrix.shape", kernel_matrix.shape)
         reshaped_features = torch.moveaxis(retrieved_features, 2, 1)
         reshaped_features = torch.moveaxis(reshaped_features, 3, 2)
         reshaped_features = reshaped_features.unsqueeze(-2)
-        print(reshaped_features.shape)
+        print("reshaped_features.shape", reshaped_features.shape)
+        features_kernel = torch.matmul(kernel_matrix, reshaped_features)
+        print("features_kernel.shape", features_kernel.shape)
+        feat = torch.sum(features_kernel, dim=2)
+        print("feat.shape", feat.shape)
         return feat.moveaxis(-1, 1)
 
 
