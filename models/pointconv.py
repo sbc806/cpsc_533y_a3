@@ -21,6 +21,7 @@ class ConvLayer(nn.Module):
         super().__init__()
 
         # TODO: We define the kernel generator.
+        self.kernel_generator = Mlps(inc, [outc])
 
         self.k = config.k  # the size of neighborhood
 
@@ -46,11 +47,13 @@ class ConvLayer(nn.Module):
         # TODO: (0 points) Step 1 -- Use `get_knn_idx` to retrieve the index of the k
         # nearest neighbors in Euclidean space. It should be of shape (b, n,
         # k). The top-K should also consider itself.
+        nearest_neighbors = get_knn_idx(loc, loc, self.k)
 
         # TODO: (0 points) Step 2 -- Use `index_points` to retrieve the features of these
         # k-nn points. Your retrieved features should be of (b, c, n, k) if
         # done properly.
         #
+        retrieved_features = index_points(feat, nearest_neighbors)
 
         # TODO: (0 points) Step 3 -- Retrieve relative location of the top-K neighbors.
         # Note that you can again use `index_points` here. An easy way to
@@ -59,6 +62,8 @@ class ConvLayer(nn.Module):
         # can easily do this. For example, if your top k locations are of shape
         # (b, d, n, k), you can subtract something of shape (b, d, n, 1) to get
         # the relative coordinates of all top-K samples for all samples.
+        retrieved_locations = index_points(loc, nearest_neighbors)
+        relative_locations = retrieved_locations - loc.unsqueeze(-1)
 
         # TODO: (5 points) Let's now regress the kernel from the coordinates
         # and apply them. Basically, use the `self.kernel_generator`, which is
@@ -66,6 +71,8 @@ class ConvLayer(nn.Module):
         # as input---as long as the input shape is (b,d,n,k) the function
         # should process the last two dimensions in the same way, and turn our
         # d dimension into kernel matrices of size (b, c1 x c2, n, k).
+        kernel_matrix = self.kernel_generator(relative_locations)
+        print(kernel_matrix.shape)
 
         # TODO: (10 points) Apply the kernel to our features obtained in step
         # 2. To do this you would need to reorder and reshape the kernel tensor
