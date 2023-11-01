@@ -32,7 +32,7 @@ class PointNet(FcNet):
         # max-pooled global feature into `logits` to be used for
         # classification. In other words, it should be a simple linear layer
         # without any activation.
-        self.output_layer = nn.Linear(config.num_pts, num_classes)
+        self.output_layer = nn.Linear(32, num_classes)
 
     def forward(self, x):
         """Forward pass.
@@ -47,8 +47,8 @@ class PointNet(FcNet):
         # `self.encoder`, you might want to investigate the `format` option for
         # easy processing.
         encoded_x = self.encoder(x, format="BNC")
-        self.pooling_layer = nn.MaxPool1d(self.config.num_pts)
-        pooled_x = self.pooling_layer(encoded_x).squeeze(-1)
+        self.pooling_layer = nn.MaxPool1d(32)
+        pooled_x = self.pooling_layer(encoded_x.transpose(2, 1)).squeeze(-1)
         logits = self.output_layer(pooled_x)
         # NOTE: we get logits as outputs, which we then use log_softmax to use
         # in our loss function.
