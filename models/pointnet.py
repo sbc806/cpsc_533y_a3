@@ -19,7 +19,7 @@ class PointNet(FcNet):
         super(PointNet, self).__init__(config)
         self.config = config
         num_classes = config.num_classes
-        self.num_points = config.num_points
+        self.num_pts = config.num_pts
 
         # TODO: (5 points) Use the class `Mlps` to implement the encoder part
         # of the pointNet. `last_bn_norm` should be True for our example, and
@@ -50,7 +50,7 @@ class PointNet(FcNet):
         # easy processing.
         encoded_x = self.encoder(x, format="BNC")
         
-        self.pooling_layer = nn.MaxPool1d(self.num_points)
+        self.pooling_layer = nn.MaxPool1d(self.num_pts)
         pooled_x = self.pooling_layer(encoded_x.transpose(2, 1)).squeeze(-1)
         
         logits = self.output_layer(pooled_x)

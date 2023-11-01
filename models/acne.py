@@ -93,7 +93,7 @@ class AcneBlock(nn.Module):
         # a "relu" layer which is using `nn.ReLU`.
         self.layer.add_module(f"Linear-{0}", nn.Conv2d(inc, outc, 1))
         self.layer.add_module(f"acn-{0}", Acn(outc, cn_opt))
-        self.layer.add_module(f"bn-{0}", nn.BatchNorm2D(outc))
+        self.layer.add_module(f"bn-{0}", nn.BatchNorm2d(outc))
         self.layer.add_module(f"relu-{0}", nn.ReLU(inplace=True))
 
     def forward(self, x):
