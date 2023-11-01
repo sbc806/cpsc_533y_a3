@@ -31,6 +31,7 @@ class Acn(nn.Module):
             self.att_layer = nn.Conv2d(inc, 1, 1)
         else:
             pass  # No layer required for CN layer.
+        print(self.atten_opt)
 
     def forward(self, x):
         b, _, n, _ = x.shape
@@ -61,7 +62,7 @@ class Acn(nn.Module):
         weighted_mean = torch.mean(weighted_x, dim=2, keepdim=True)
         weighted_std = torch.std(weighted_x, dim=2, keepdim=True, correction=0)
 
-        out = (x - weighted_mean) / (weighted_std + self.eps)
+        out = (weighted_x - weighted_mean) / (weighted_std + self.eps)
 
         return out
 

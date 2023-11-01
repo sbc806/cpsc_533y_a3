@@ -72,7 +72,7 @@ class ConvLayer(nn.Module):
         # should process the last two dimensions in the same way, and turn our
         # d dimension into kernel matrices of size (b, c1 x c2, n, k).
         kernel_matrix = self.kernel_generator(relative_locations)
-        print(kernel_matrix.shape)
+        print("kernel_matrix.shape", kernel_matrix.shape)
 
         # TODO: (10 points) Apply the kernel to our features obtained in step
         # 2. To do this you would need to reorder and reshape the kernel tensor

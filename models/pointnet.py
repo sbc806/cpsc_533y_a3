@@ -26,7 +26,7 @@ class PointNet(FcNet):
         # we would like to use 3 blocks, where each of our pointnet block to
         # have 32 neurons.
         self.net = nn.Sequential()
-        self.encoder = Mlps(config.in_dim, [32, 32, 32], last_bn_norm=True)
+        self.encoder = Mlps(config.indim, [32, 32, 32], last_bn_norm=True)
         # self.net.add_module(f"Mlps-{1}", Mlps(inc, [32], last_bn_norm=True))
         # self.net.add_module(f"Mlps-{2}", Mlps(32, [32], last_bn_norm=True))
         # self.net.add_module(f"Mlps-{3}", Mlps(32, [32], last_bn_norm=True))
