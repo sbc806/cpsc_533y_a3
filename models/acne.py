@@ -63,8 +63,7 @@ class Acn(nn.Module):
         weighted_std = torch.std(weighted_x, dim=2, keepdim=True, correction=0)
 
         out = (weighted_x - weighted_mean) / (weighted_std + self.eps)
-        print(torch.mean(out, dim=1))
-        print(torch.std(out, dim=1))
+        
         return out
 
 
