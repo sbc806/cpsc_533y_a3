@@ -19,7 +19,7 @@ class ConvLayer(nn.Module):
     # WEIWEI: above description seem wrong?
     def __init__(self, inc, outc, config):
         super().__init__()
-
+        print(inc, outc)
         # TODO: We define the kernel generator.
         self.kernel_generator = Mlps(config.indim, [outc])
 
@@ -39,7 +39,8 @@ class ConvLayer(nn.Module):
         feat, loc = x
         # Sample a set from input point cloud.
         b, c, n = feat.shape
-
+        print(feat.shape)
+        print(loc.shape)
         # NOTE: Steps 1 to 3 below are nearly identical for both pointnet2 and pointconv. 
         # The minor difference would be that pointnet2 operates on downsampled point clouds 
         # while pointconv operates on input resolution.
