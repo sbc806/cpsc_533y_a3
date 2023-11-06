@@ -39,8 +39,7 @@ class ConvLayer(nn.Module):
         feat, loc = x
         # Sample a set from input point cloud.
         b, c, n = feat.shape
-        print(feat.shape)
-        print(loc.shape)
+      
         # NOTE: Steps 1 to 3 below are nearly identical for both pointnet2 and pointconv. 
         # The minor difference would be that pointnet2 operates on downsampled point clouds 
         # while pointconv operates on input resolution.
@@ -48,7 +47,7 @@ class ConvLayer(nn.Module):
         # TODO: (0 points) Step 1 -- Use `get_knn_idx` to retrieve the index of the k
         # nearest neighbors in Euclidean space. It should be of shape (b, n,
         # k). The top-K should also consider itself.
-        nearest_neighbors = get_knn_idx(loc, loc, self.k)
+        nearest_neighbors = get_knn_idx(feat, feat, self.k)
 
         # TODO: (0 points) Step 2 -- Use `index_points` to retrieve the features of these
         # k-nn points. Your retrieved features should be of (b, c, n, k) if
@@ -73,8 +72,7 @@ class ConvLayer(nn.Module):
         # should process the last two dimensions in the same way, and turn our
         # d dimension into kernel matrices of size (b, c1 x c2, n, k).
         kernel_matrix = self.kernel_generator(relative_locations)
-        print("kernel_matrix.shape", kernel_matrix.shape)
-
+        
         # TODO: (10 points) Apply the kernel to our features obtained in step
         # 2. To do this you would need to reorder and reshape the kernel tensor
         # to be of shape (b, n, k, c1, c2) and also the features in step 2 into
@@ -84,13 +82,10 @@ class ConvLayer(nn.Module):
         # sum up along the `k` dimension here, ultimately achieving (b, n, c2)
         # as output.
         kernel_matrix = kernel_matrix.reshape((b, n, self.k, c, -1))
-        print("kernel_matrix.shape", kernel_matrix.shape)
         reshaped_features = retrieved_features.reshape((b, n, self.k, 1, c))
-        print("reshaped_features.shape", reshaped_features.shape)
         features_kernel = torch.matmul(reshaped_features, kernel_matrix)
-        print("features_kernel.shape", features_kernel.shape)
         feat = torch.sum(features_kernel, dim=2).squeeze()
-        print("feat.shape", feat.shape)
+        
         return feat.moveaxis(-1, 1)
 
 

@@ -39,7 +39,7 @@ class SetAbstraction(nn.Module):
         """
         feat, loc = x
         b, c, n = feat.shape
-        print(feat.shape)
+        
         # TODO: (5 points) Sample a subset from the input point cloud using
         # `sampling_fps`. The number of samples you get should be based on
         # `self.downratio`. The example implementation uses flooring to when
