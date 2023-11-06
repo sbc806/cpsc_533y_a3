@@ -58,13 +58,13 @@ class Acn(nn.Module):
         # TODO: (5 points) Calculate the weighted statistics -- mean and std.
         # Mean/Std should be of shape (b,c,1,1), which you then apply to your
         # data to make mean zero std 1.
-        # weighted_x = a * x
+        weighted_x = a * x
         # weighted_mean = torch.mean(weighted_x, dim=2, keepdim=True)
         # weighted_std = torch.std(weighted_x, dim=2, keepdim=True, correction=0)
         print(a.shape)
         print(x.shape)
-        weighted_mean = a * x
-        weighted_std = torch.sqrt(torch.sum(x - weighted_mean, dim=2) / n)
+        weighted_mean = torch.sum(weighted_x, dim=2, keepdim=True)
+        weighted_std = torch.sqrt(torch.sum(x - weighted_mean, dim=2, keepdim=True) / n)
         print(weighted_mean.shape)
         print(weighted_std.shape)
         out = (x - weighted_mean) / (weighted_std + self.eps)

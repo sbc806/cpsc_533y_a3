@@ -21,7 +21,7 @@ class ConvLayer(nn.Module):
         super().__init__()
         print(inc, outc)
         # TODO: We define the kernel generator.
-        self.kernel_generator = Mlps(config.indim, [inc*outc])
+        self.kernel_generator = Mlps(config.indim, [outc], last_bn_norm=True)
 
         self.k = config.k  # the size of neighborhood
 
@@ -47,7 +47,7 @@ class ConvLayer(nn.Module):
         # TODO: (0 points) Step 1 -- Use `get_knn_idx` to retrieve the index of the k
         # nearest neighbors in Euclidean space. It should be of shape (b, n,
         # k). The top-K should also consider itself.
-        nearest_neighbors = get_knn_idx(feat, feat, self.k)
+        nearest_neighbors = get_knn_idx(loc, loc, self.k)
 
         # TODO: (0 points) Step 2 -- Use `index_points` to retrieve the features of these
         # k-nn points. Your retrieved features should be of (b, c, n, k) if
