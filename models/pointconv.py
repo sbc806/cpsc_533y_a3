@@ -19,9 +19,9 @@ class ConvLayer(nn.Module):
     # WEIWEI: above description seem wrong?
     def __init__(self, inc, outc, config):
         super().__init__()
-        print(inc, outc)
+        
         # TODO: We define the kernel generator.
-        self.kernel_generator = Mlps(config.indim, [outc], last_bn_norm=True)
+        self.kernel_generator = Mlps(config.indim, [inc*outc], last_bn_norm=True)
 
         self.k = config.k  # the size of neighborhood
 
