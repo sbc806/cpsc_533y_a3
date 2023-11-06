@@ -31,8 +31,7 @@ class Acn(nn.Module):
             self.att_layer = nn.Conv2d(inc, 1, 1)
         else:
             pass  # No layer required for CN layer.
-        print(self.atten_opt)
-
+        
     def forward(self, x):
         b, _, n, _ = x.shape
 
