@@ -47,9 +47,7 @@ class SetAbstraction(nn.Module):
         # locations should be `set_loc` with size of m.
         m = math.floor(n * self.downratio)
         set_loc = sampling_fps(loc, m)
-        # print("n", n, "m", m)
-        # print("set_loc.shape", set_loc.shape)
-
+        
         # NOTE: Steps 1 to 3 below are nearly identical for both pointnet2 and pointconv. 
         # The minor difference would be that pointnet2 operates on downsampled point clouds 
         # while pointconv operates on input resolution.
@@ -58,15 +56,13 @@ class SetAbstraction(nn.Module):
         # nearest neighbors in Euclidean space. It should be of shape (b, m,
         # k). The top-K should also consider itself.
         nearest_neighbors = get_knn_idx(set_loc, loc, self.k)
-        # print("nearest_neighbors.shape", nearest_neighbors.shape)
-
+        
         # TODO: (5 points) Step 2 -- Use `index_points` to retrieve the features of these
         # k-nn points. Your retrieved features should be of (b, c, m, k) if
         # done properly.
         #
         retrieved_features = index_points(feat, nearest_neighbors)
-        # print("retrieved_features.shape", retrieved_features.shape)
-
+        
         # TODO: (5 points) Step 3 -- Retrieve relative location of the top-K neighbors.
         # Note that you can again use `index_points` here. An easy way to
         # compute this would be to retrieve all top-k locations and subtract
@@ -76,21 +72,17 @@ class SetAbstraction(nn.Module):
         # the relative coordinates of all top-K samples for all samples.
         retrieved_locations = index_points(loc, nearest_neighbors)
         relative_locations = retrieved_locations - set_loc.unsqueeze(-1)
-        # print("relative_locations.shape", relative_locations.shape)
-
+        
         # TODO: (5 points) Concatenate features from step 2 with their relative locations
         # from step 3. This should result in a (b, d+c, m, k) array.
         concatenated_features = torch.cat((retrieved_features, relative_locations), dim=1)
-        # print("concatenated_features.shape", concatenated_features.shape)
-
+        
         # TODO: (5 points) Process concatenated features with `self.mlps` to obtain a new
         # set of features of shape (b, c', m, k) and then take the maximum
         # along the `k` dimension to get our final descriptors `set_feat`.
         processed_concatenated_features = self.mlps(concatenated_features)
-        # print("processed_concatenated_features.shape", processed_concatenated_features.shape)
         set_feat, _= torch.max(processed_concatenated_features, dim=-1)
-        # print("set_feat.shape", set_feat.shape)
-
+        
         return (set_feat, set_loc)
 
 
