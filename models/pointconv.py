@@ -81,8 +81,13 @@ class ConvLayer(nn.Module):
         # of (b, n, k, c2, 1) or (b, n, k, 1, c2) at the end. You then need to
         # sum up along the `k` dimension here, ultimately achieving (b, n, c2)
         # as output.
+        # kernel_matrix = kernel_matrix.reshape((b, n, self.k, c, -1))
+        # reshaped_features = retrieved_features.reshape((b, n, self.k, 1, c))
+        kernel_matrix = kernel_matrix.transpose(2, 1)
+        kernel_matrix = kernel_matrix.transpose(-2, -1)
         kernel_matrix = kernel_matrix.reshape((b, n, self.k, c, -1))
-        reshaped_features = retrieved_features.reshape((b, n, self.k, 1, c))
+        reshaped_features = retrieved_features.transpose(2, 1)
+        reshaped_features = retrieved_features.transpose(-2, -1)
         features_kernel = torch.matmul(reshaped_features, kernel_matrix)
         feat = torch.sum(features_kernel, dim=2).squeeze()
         
