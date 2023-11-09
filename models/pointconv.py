@@ -88,6 +88,7 @@ class ConvLayer(nn.Module):
         kernel_matrix = kernel_matrix.reshape((b, n, self.k, c, -1))
         reshaped_features = retrieved_features.transpose(2, 1)
         reshaped_features = retrieved_features.transpose(-2, -1)
+        reshaped_features = reshaped_features.unsqueeze(-2)
         features_kernel = torch.matmul(reshaped_features, kernel_matrix)
         feat = torch.sum(features_kernel, dim=2).squeeze()
         
