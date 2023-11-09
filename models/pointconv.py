@@ -21,7 +21,7 @@ class ConvLayer(nn.Module):
         super().__init__()
         
         # TODO: We define the kernel generator.
-        self.kernel_generator = Mlps(config.indim, [inc*outc], last_bn_norm=True)
+        self.kernel_generator = Mlps(config.indim, [inc*outc], last_bn_norm=False)
         
         self.k = config.k  # the size of neighborhood
 
